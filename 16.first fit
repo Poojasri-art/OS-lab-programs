@@ -1,0 +1,58 @@
+//1)Construct a c program using first fit algorithm of memory management.
+//Code:
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX_BLOCKS 10
+typedef struct {
+    int size;       
+    int isFree;    
+} MemoryBlock;
+MemoryBlock memory[MAX_BLOCKS];
+void initializeMemory() {
+    for (int i = 0; i < MAX_BLOCKS; i++) {
+        memory[i].size = rand() % 100 + 1; 
+        memory[i].isFree = 1; 
+    }
+}
+int allocateMemory(int size) {
+    for (int i = 0; i < MAX_BLOCKS; i++) {
+        if (memory[i].isFree && memory[i].size >= size) {
+            memory[i].isFree = 0; 
+            printf("Allocated %d bytes from block %d\n", size, i);
+            return i; 
+        }
+    }
+    printf("Memory allocation of %d bytes failed: Not enough space\n", size);
+    return -1; 
+}
+void freeMemory(int blockIndex) {
+    if (blockIndex >= 0 && blockIndex < MAX_BLOCKS) {
+        if (!memory[blockIndex].isFree) {
+            memory[blockIndex].isFree = 1; 
+            printf("Freed memory from block %d\n", blockIndex);
+        } else {
+            printf("Block %d is already free\n", blockIndex);
+        }
+    } else {
+        printf("Invalid block index\n");
+    }
+}
+void displayMemory() {
+    printf("\nMemory Status:\n");
+    for (int i = 0; i < MAX_BLOCKS; i++) {
+        printf("Block %d: Size = %d, Status = %s\n", i, memory[i].size, memory[i].isFree ? "Free" : "Allocated");
+    }
+}
+int main() {
+    initializeMemory();
+    displayMemory();
+    allocateMemory(30);
+    allocateMemory(50);
+    allocateMemory(20);
+    allocateMemory(80); 
+    displayMemory();
+    freeMemory(0); 
+    freeMemory(1); 
+    displayMemory();
+    return 0;
+}
