@@ -1,0 +1,68 @@
+//3) Design a c program to simulate scan disk scheduling algorithm.
+//Code:
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX_REQUESTS 100
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+int calculateTotalHeadMovement(int requests[], int n, int initialHead, int direction) {
+    int totalMovement = 0;
+    int currentHead = initialHead;
+    qsort(requests, n, sizeof(int), compare);
+    int index;
+    for (index = 0; index < n; index++) {
+        if (requests[index] >= currentHead) {
+            break;
+        }
+    }
+    if (direction == 1) {
+        for (int i = index; i < n; i++) {
+            totalMovement += abs(requests[i] - currentHead);
+            currentHead = requests[i];
+        }
+        totalMovement += abs(199 - currentHead);
+        currentHead = 199;
+        for (int i = index - 1; i >= 0; i--) {
+            totalMovement += abs(requests[i] - currentHead);
+            currentHead = requests[i];
+        }
+    } else { 
+        for (int i = index - 1; i >= 0; i--) {
+            totalMovement += abs(requests[i] - currentHead);
+            currentHead = requests[i];
+        }
+        totalMovement += abs(0 - currentHead);
+        currentHead = 0;
+        for (int i = index; i < n; i++) {
+            totalMovement += abs(requests[i] - currentHead);
+            currentHead = requests[i];
+        }
+    }
+    return totalMovement;
+}
+void displayOrder(int requests[], int n) {
+    printf("Order of disk requests: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", requests[i]);
+    }
+    printf("\n");
+}
+int main() {
+    int requests[MAX_REQUESTS];
+    int n, initialHead, direction;
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &n);
+    printf("Enter the disk requests (cylinder numbers):\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &requests[i]);
+    }
+    printf("Enter the initial head position: ");
+    scanf("%d", &initialHead);
+    printf("Enter the direction of movement (1 for up, 0 for down): ");
+    scanf("%d", &direction);
+    displayOrder(requests, n);
+    int totalMovement = calculateTotalHeadMovement(requests, n, initialHead, direction);
+    printf("Total head movement: %d\n", totalMovement);
+    return 0;
+}
